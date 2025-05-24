@@ -55,7 +55,8 @@
     let refreshInterval;
 
     async function fetchImages() {
-      const query = `'${FOLDER_ID}' in parents and mimeType contains 'image/' and trashed = false`;
+     const query = `'${FOLDER_ID}' in parents and (mimeType contains 'image/' or mimeType contains 'video/') and trashed = false`;
+
       const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=files(id,name)&key=${API_KEY}`;
 
       try {
