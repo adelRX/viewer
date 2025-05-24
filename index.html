@@ -2,32 +2,56 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>عرض صور من مجلد Google Drive عام</title>
+  <title>📷 معرض صور من Google Drive</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
     img {
       max-width: 200px;
       margin: 10px;
       border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
   </style>
 </head>
 <body>
   <h2>📷 صور من مجلد Google Drive</h2>
-  <div id="gallery"></div>
+  <div id="gallery">⏳ جاري تحميل الصور...</div>
 
   <script>
-    const imageIds = [
-      "1dx_WJwu_mPx3_fp0EUPY1BzX5ZkdS1df",
-      "1thzbgpZRFOgd89rUeBEI1LORtSbHqdWt",
-      "1ndQ7n9BRGCbtk3j5Jp2zSWN76sM7nzm4"
-    ];
+    const API_KEY = 'AIzaSyBRQBXAd6jap9Iy-Ia0SMxfEPK0FxeQDP4';
+    const FOLDER_ID = '1o4dVaF_wDCzYVpToDaRmNJTN1kLh1krV'; // معرف المجلد فقط، وليس الرابط الكامل
 
-    const gallery = document.getElementById("gallery");
-    imageIds.forEach(id => {
-      const img = document.createElement("img");
-      img.src = `https://drive.google.com/uc?export=view&id=${id}`;
-      gallery.appendChild(img);
-    });
+    async function listImages() {
+      const query = encodeURIComponent(`'${FOLDER_ID}' in parents and mimeType contains 'image/' and trashed = false`);
+      const url = `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&key=${API_KEY}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const gallery = document.getElementById('gallery');
+        gallery.innerHTML = '';
+
+        if (data.files && data.files.length > 0) {
+          data.files.forEach(file => {
+            const img = document.createElement('img');
+            img.src = `https://drive.google.com/uc?export=view&id=${file.id}`;
+            img.alt = file.name;
+            gallery.appendChild(img);
+          });
+        } else {
+          gallery.textContent = '📭 لا توجد صور في هذا المجلد.';
+        }
+      } catch (error) {
+        console.error('خطأ في جلب الصور:', error);
+        document.getElementById('gallery').textContent = '❌ حدث خطأ أثناء تحميل الصور.';
+      }
+    }
+
+    listImages();
   </script>
 </body>
 </html>
