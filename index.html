@@ -2,66 +2,31 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>عرض صور من Google Drive Folder</title>
-  <script src="https://apis.google.com/js/api.js"></script>
+  <title>عرض صور من مجلد Google Drive عام</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
     img {
       max-width: 200px;
       margin: 10px;
       border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
   </style>
 </head>
 <body>
   <h2>📷 صور من مجلد Google Drive</h2>
-  <button onclick="authenticate().then(loadClient)">🔐 تسجيل الدخول لعرض الصور</button>
   <div id="gallery"></div>
 
   <script>
-    const CLIENT_ID = '284239868836-4dja620m9m3ouac2j7tjh2fra1abqunl.apps.googleusercontent.com';
-    const FOLDER_ID = '1o4dVaF_wDCzYVpToDaRmNJTN1kLh1krV'; // فقط ID المجلد
-    const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
+    const imageIds = [
+      "FILE_ID_1",
+      "FILE_ID_2",
+      "FILE_ID_3"
+    ];
 
-    function authenticate() {
-      return gapi.auth2.getAuthInstance().signIn({ scope: SCOPES });
-    }
-
-    function loadClient() {
-      return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/drive/v3/rest")
-        .then(listImages);
-    }
-
-    function listImages() {
-      return gapi.client.drive.files.list({
-        q: `'${FOLDER_ID}' in parents and mimeType contains 'image/' and trashed = false`,
-        fields: "files(id, name)"
-      }).then(response => {
-        const gallery = document.getElementById('gallery');
-        gallery.innerHTML = '';
-        const files = response.result.files;
-        if (files && files.length > 0) {
-          files.forEach(file => {
-            const img = document.createElement('img');
-            img.src = `https://drive.google.com/uc?export=view&id=${file.id}`;
-            img.alt = file.name;
-            gallery.appendChild(img);
-          });
-        } else {
-          gallery.innerHTML = '📭 لا توجد صور في هذا المجلد.';
-        }
-      }, error => {
-        console.error('خطأ في جلب الصور:', error);
-        alert("فشل تحميل الصور. تأكد من أن المجلد متاح وأن لديك صلاحيات الوصول.");
-      });
-    }
-
-    gapi.load("client:auth2", () => {
-      gapi.auth2.init({ client_id: CLIENT_ID });
+    const gallery = document.getElementById("gallery");
+    imageIds.forEach(id => {
+      const img = document.createElement("img");
+      img.src = `https://drive.google.com/uc?export=view&id=${id}`;
+      gallery.appendChild(img);
     });
   </script>
 </body>
