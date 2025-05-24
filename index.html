@@ -31,6 +31,9 @@
       const query = encodeURIComponent(`'${FOLDER_ID}' in parents and mimeType contains 'image/' and trashed = false`);
       const url = `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&key=${API_KEY}`;
 
+ function loadImage() {
+
+      
       try {
         const response = await fetch(url);
         const data = await response.json();
@@ -56,6 +59,12 @@
     }
 
     listImages();
+}
+ loadImage();
+     setInterval(loadImage, 2000);
+
+    
+      
   </script>
 </body>
 </html>
