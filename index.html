@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>عرض صور Google Drive تلقائي ملء الشاشة باستخدام iframe</title>
+  <title>عرض صور Google Drive تلقائي مع تحديث دوري</title>
   <style>
     body, html {
       margin: 0; padding: 0; height: 100%; width: 100%;
@@ -51,6 +51,8 @@
 
     let images = [];
     let currentIndex = 0;
+    let slideshowInterval;
+    let refreshInterval;
 
     async function fetchImages() {
       const query = `'${FOLDER_ID}' in parents and mimeType contains 'image/' and trashed = false`;
@@ -61,19 +63,34 @@
         const data = await res.json();
 
         if (data.files && data.files.length > 0) {
-          images = data.files.map(file => ({
+          // تحديث الصور فقط إذا تغيرت القائمة
+          const newImages = data.files.map(file => ({
             id: file.id,
             name: file.name,
             url: `https://drive.google.com/file/d/${file.id}/preview`
           }));
-          showImage(currentIndex);
-          startSlideshow();
+
+          // مقارنة لتجنب إعادة تعيين نفس القائمة
+          if (JSON.stringify(newImages) !== JSON.stringify(images)) {
+            images = newImages;
+
+            // إذا كان currentIndex أكبر من آخر صورة، إعادة تعيينه
+            if (currentIndex >= images.length) {
+              currentIndex = 0;
+            }
+
+            showImage(currentIndex);
+          }
         } else {
           document.getElementById('container').innerHTML = '📭 لا توجد صور في هذا المجلد.';
+          clearInterval(slideshowInterval);
+          clearInterval(refreshInterval);
         }
       } catch (e) {
         console.error(e);
         document.getElementById('container').innerHTML = '❌ حدث خطأ أثناء تحميل الصور.';
+        clearInterval(slideshowInterval);
+        clearInterval(refreshInterval);
       }
     }
 
@@ -92,12 +109,25 @@
     }
 
     function startSlideshow() {
-      setInterval(() => {
+      slideshowInterval = setInterval(() => {
         showImage(currentIndex + 1);
       }, 3000);
     }
 
-    fetchImages();
+    function startRefresh() {
+      // تحديث الصور كل 60 ثانية
+      refreshInterval = setInterval(() => {
+        fetchImages();
+      }, 600000);
+    }
+
+    async function init() {
+      await fetchImages();
+      startSlideshow();
+      startRefresh();
+    }
+
+    init();
   </script>
 
 </body>
