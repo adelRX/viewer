@@ -83,31 +83,26 @@
       }
     }
 
-    function showMedia(file) {
-      const container = document.getElementById('container');
-      const caption = document.getElementById('caption');
+  function showMedia(file) {
+  const container = document.getElementById('container');
+  const caption = document.getElementById('caption');
 
-      // إزالة كل الوسائط السابقة
-      container.querySelectorAll("iframe, video").forEach(el => el.remove());
+  // إزالة كل الوسائط السابقة
+  container.querySelectorAll("iframe, video").forEach(el => el.remove());
 
-      caption.textContent = file.name;
+  caption.textContent = file.name;
 
-      if (file.mimeType.startsWith("video/")) {
-        const video = document.createElement("video");
-        video.src = `https://drive.google.com/uc?export=download&id=${file.id}`;
-        video.autoplay = true;
-        video.muted = true;
-        video.controls = false;
-        video.loop = true;
-        container.insertBefore(video, caption);
-      } else {
-        const iframe = document.createElement("iframe");
-        iframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
-        iframe.allowFullscreen = true;
-        iframe.frameBorder = 0;
-        container.insertBefore(iframe, caption);
-      }
-    }
+  const iframe = document.createElement("iframe");
+  iframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
+  iframe.allow = "autoplay";
+  iframe.allowFullscreen = true;
+  iframe.frameBorder = 0;
+  iframe.style.width = "100vw";
+  iframe.style.height = "100vh";
+
+  container.insertBefore(iframe, caption);
+}
+
 
     function startSlideshow() {
       slideshowInterval = setInterval(() => {
