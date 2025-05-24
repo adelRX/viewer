@@ -9,11 +9,13 @@
       padding: 20px;
       text-align: center;
     }
-    img {
+    iframe {
       max-width: 200px;
+      max-height: 200px;
       margin: 10px;
       border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      border: none;
     }
   </style>
 </head>
@@ -23,7 +25,7 @@
 
   <script>
     const API_KEY = 'AIzaSyBRQBXAd6jap9Iy-Ia0SMxfEPK0FxeQDP4';
-    const FOLDER_ID = '1o4dVaF_wDCzYVpToDaRmNJTN1kLh1krV'; // معرف المجلد فقط، وليس الرابط الكامل
+    const FOLDER_ID = '1o4dVaF_wDCzYVpToDaRmNJTN1kLh1krV';
 
     async function listImages() {
       const query = encodeURIComponent(`'${FOLDER_ID}' in parents and mimeType contains 'image/' and trashed = false`);
@@ -37,17 +39,19 @@
 
         if (data.files && data.files.length > 0) {
           data.files.forEach(file => {
-            const img = document.createElement('img');
-            img.src = `https://drive.google.com/uc?export=view&id=${file.id}`;
-            img.alt = file.name;
-            gallery.appendChild(img);
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
+            iframe.title = file.name;
+            iframe.width = "200";
+            iframe.height = "200";
+            gallery.appendChild(iframe);
           });
         } else {
           gallery.textContent = '📭 لا توجد صور في هذا المجلد.';
         }
       } catch (error) {
         console.error('خطأ في جلب الصور:', error);
-        document.getElementById('gallery').textContent = '❌ حدث خطأ أثناء تحميل الصور.';
+        gallery.textContent = '❌ حدث خطأ أثناء تحميل الصور.';
       }
     }
 
