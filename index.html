@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>عرض صور Google Drive تلقائي ملء الشاشة</title>
+  <title>عرض صور Google Drive تلقائي ملء الشاشة باستخدام iframe</title>
   <style>
     body, html {
       margin: 0; padding: 0; height: 100%; width: 100%;
@@ -19,12 +19,10 @@
       height: 100vh;
       position: relative;
     }
-    img {
-      max-width: 100vw;
-      max-height: 100vh;
-      display: block;
-      margin: auto;
-      object-fit: contain;
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
       background: #000;
     }
     #caption {
@@ -36,13 +34,14 @@
       background: rgba(0,0,0,0.5);
       padding: 10px;
       user-select: none;
+      color: white;
     }
   </style>
 </head>
 <body>
 
   <div id="container">
-    <img id="slide" src="" alt="صورة من Google Drive" />
+    <iframe id="slide" src="" allowfullscreen></iframe>
     <div id="caption"></div>
   </div>
 
@@ -65,7 +64,7 @@
           images = data.files.map(file => ({
             id: file.id,
             name: file.name,
-            url: `https://drive.google.com/uc?export=view&id=${file.id}`
+            url: `https://drive.google.com/file/d/${file.id}/preview`
           }));
           showImage(currentIndex);
           startSlideshow();
@@ -85,17 +84,17 @@
       if(index >= images.length) index = 0;
       currentIndex = index;
 
-      const img = document.getElementById('slide');
+      const iframe = document.getElementById('slide');
       const caption = document.getElementById('caption');
 
-      img.src = images[index].url;
+      iframe.src = images[index].url;
       caption.textContent = images[index].name;
     }
 
     function startSlideshow() {
       setInterval(() => {
         showImage(currentIndex + 1);
-      }, 3000); // تغيير الصورة كل 3 ثواني
+      }, 3000);
     }
 
     fetchImages();
