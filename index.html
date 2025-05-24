@@ -24,12 +24,11 @@
 
   <script>
     const CLIENT_ID = '284239868836-4dja620m9m3ouac2j7tjh2fra1abqunl.apps.googleusercontent.com';
-    const FOLDER_ID = 'https://drive.google.com/drive/folders/1o4dVaF_wDCzYVpToDaRmNJTN1kLh1krV?usp=sharing';
+    const FOLDER_ID = '1o4dVaF_wDCzYVpToDaRmNJTN1kLh1krV'; // فقط ID المجلد
+    const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
 
     function authenticate() {
-      return gapi.auth2.getAuthInstance()
-        ? Promise.resolve()
-        : gapi.auth2.init({ client_id: CLIENT_ID }).then(() => gapi.auth2.getAuthInstance().signIn());
+      return gapi.auth2.getAuthInstance().signIn({ scope: SCOPES });
     }
 
     function loadClient() {
@@ -49,6 +48,7 @@
           files.forEach(file => {
             const img = document.createElement('img');
             img.src = `https://drive.google.com/uc?export=view&id=${file.id}`;
+            img.alt = file.name;
             gallery.appendChild(img);
           });
         } else {
@@ -56,10 +56,11 @@
         }
       }, error => {
         console.error('خطأ في جلب الصور:', error);
+        alert("فشل تحميل الصور. تأكد من أن المجلد متاح وأن لديك صلاحيات الوصول.");
       });
     }
 
-    gapi.load("client:auth2", function () {
+    gapi.load("client:auth2", () => {
       gapi.auth2.init({ client_id: CLIENT_ID });
     });
   </script>
