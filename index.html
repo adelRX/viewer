@@ -23,11 +23,12 @@
 
 
     <main>
-     <section id="announcements">
+  <section id="announcements">
     <h2>الإعلانات</h2>
     <div id="container"></div> <!-- مكان عرض الوسائط -->
     <p id="caption"></p> <!-- اسم الملف يظهر هنا -->
 </section>
+
 
 
 
@@ -113,23 +114,23 @@ async function fetchMediaFiles() {
 }
 
 function showMedia(file) {
+    console.log("📸 عرض الوسائط:", file);
     const container = document.getElementById('container');
     const caption = document.getElementById('caption');
 
-    container.querySelectorAll("iframe, video").forEach(el => el.remove());
-
+    container.innerHTML = ""; // تنظيف المحتوى السابق
     caption.textContent = file.name;
 
     const iframe = document.createElement("iframe");
     iframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
-    iframe.allow = "autoplay";
     iframe.allowFullscreen = true;
     iframe.frameBorder = 0;
     iframe.style.width = "100%";
     iframe.style.height = "400px";
 
-    container.insertBefore(iframe, caption);
+    container.appendChild(iframe); // إدراج الـ iframe داخل #container
 }
+
 
 function startSlideshow() {
     slideshowInterval = setInterval(() => {
