@@ -1,128 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <title>📷🎥 عرض وسائط Google Drive تلقائي</title>
-  <style>
-    html, body {
-      margin: 0; padding: 0;
-      width: 100vw; height: 100vh;
-      background: #000;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: Arial, sans-serif;
-    }
-    #container {
-      width: 100vw;
-      height: 100vh;
-      position: relative;
-    }
-    iframe, video {
-      width: 100vw;
-      height: 100vh;
-      border: none;
-      background: #000;
-      object-fit: contain;
-    }
-    #caption {
-      position: absolute;
-      bottom: 20px;
-      left: 0; right: 0;
-      text-align: center;
-      font-size: 18px;
-      background: rgba(0,0,0,0.5);
-      padding: 10px;
-      color: white;
-      user-select: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعلان المسجد</title>
+    <link rel="stylesheet" href="body1.css">
 </head>
 <body>
+    <header>
+      <header>
+   
+</header>
 
-  <div id="container">
-    <div id="caption"></div>
-  </div>
+    </header>
 
-  <script>
-    const API_KEY = 'AIzaSyBRQBXAd6jap9Iy-Ia0SMxfEPK0FxeQDP4';
-    const FOLDER_ID = '1o4dVaF_wDCzYVpToDaRmNJTN1kLh1krV';
+<section id="hadith">
+    <h2>حديث اليوم</h2>
+    <iframe src="https://drive.google.com/file/d/1Oe-sZGfPftXiyYyoAg23tNmfPlDZe6wT/preview" width="200" height="900"></iframe>
+    
+</section>
 
-    let mediaFiles = [];
-    let currentIndex = 0;
-    let slideshowInterval;
-    let refreshInterval;
 
-    async function fetchMediaFiles() {
-      const query = `'${FOLDER_ID}' in parents and (mimeType contains 'image/' or mimeType contains 'video/') and trashed = false`;
-      const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=files(id,name,mimeType)&key=${API_KEY}`;
 
-      try {
+    <main>
+     <section id="announcements">
+    <h2>الإعلانات</h2>
+    <div id="container"></div> <!-- مكان عرض الوسائط -->
+    <p id="caption"></p> <!-- اسم الملف يظهر هنا -->
+</section>
+
+
+
+        <aside id="sidebar">
+            <h2>روابط سريعة</h2>
+            <ul>
+                <li><a href="#">أوقات الصلاة</a></li>
+                <li><a href="#">اتصل بنا</a></li>
+            </ul>
+        </aside>
+    </main>
+<script>
+   const API_KEY = 'AIzaSyBRQBXAd6jap9Iy-Ia0SMxfEPK0FxeQDP4';
+const FOLDER_ID = '1o4dVaF_wDCzYVpToDaRmNJTN1kLh1krV';
+
+let mediaFiles = [];
+let currentIndex = 0;
+let slideshowInterval;
+let refreshInterval;
+
+async function fetchMediaFiles() {
+    const query = `'${FOLDER_ID}' in parents and (mimeType contains 'image/' or mimeType contains 'video/') and trashed = false`;
+    const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=files(id,name,mimeType)&key=${API_KEY}`;
+
+    try {
         const res = await fetch(url);
         const data = await res.json();
 
         const newFiles = data.files.map(file => ({
-          id: file.id,
-          name: file.name,
-          mimeType: file.mimeType
+            id: file.id,
+            name: file.name,
+            mimeType: file.mimeType
         }));
 
         if (JSON.stringify(newFiles) !== JSON.stringify(mediaFiles)) {
-          mediaFiles = newFiles;
-          if (currentIndex >= mediaFiles.length) {
-            currentIndex = 0;
-          }
-          showMedia(mediaFiles[currentIndex]);
+            mediaFiles = newFiles;
+            if (currentIndex >= mediaFiles.length) {
+                currentIndex = 0;
+            }
+            showMedia(mediaFiles[currentIndex]);
         }
-      } catch (e) {
-        console.error("حدث خطأ أثناء جلب الوسائط:", e);
+    } catch (e) {
+        console.error("❌ حدث خطأ أثناء جلب الوسائط:", e);
         document.getElementById('container').innerHTML = '❌ فشل في تحميل الملفات.';
         clearInterval(slideshowInterval);
         clearInterval(refreshInterval);
-      }
     }
-
-  function showMedia(file) {
-  const container = document.getElementById('container');
-  const caption = document.getElementById('caption');
-
-  // إزالة كل الوسائط السابقة
-  container.querySelectorAll("iframe, video").forEach(el => el.remove());
-
-  caption.textContent = file.name;
-
-  const iframe = document.createElement("iframe");
-  iframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
-  iframe.allow = "autoplay";
-  iframe.allowFullscreen = true;
-  iframe.frameBorder = 0;
-  iframe.style.width = "100vw";
-  iframe.style.height = "100vh";
-
-  container.insertBefore(iframe, caption);
 }
 
+function showMedia(file) {
+    const container = document.getElementById('container');
+    const caption = document.getElementById('caption');
 
-    function startSlideshow() {
-      slideshowInterval = setInterval(() => {
+    container.querySelectorAll("iframe, video").forEach(el => el.remove());
+
+    caption.textContent = file.name;
+
+    const iframe = document.createElement("iframe");
+    iframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
+    iframe.allow = "autoplay";
+    iframe.allowFullscreen = true;
+    iframe.frameBorder = 0;
+    iframe.style.width = "100%";
+    iframe.style.height = "400px";
+
+    container.insertBefore(iframe, caption);
+}
+
+function startSlideshow() {
+    slideshowInterval = setInterval(() => {
         currentIndex = (currentIndex + 1) % mediaFiles.length;
         showMedia(mediaFiles[currentIndex]);
-      }, 20000); // 5 ثواني لكل وسيلة
-    }
+    }, 20000); // تغيير كل 20 ثانية
+}
 
-    function startAutoRefresh() {
-      refreshInterval = setInterval(fetchMediaFiles, 60000); // كل 60 ثانية
-    }
+function startAutoRefresh() {
+    refreshInterval = setInterval(fetchMediaFiles, 60000); // تحديث كل دقيقة
+}
 
-    async function init() {
-      await fetchMediaFiles();
-      startSlideshow();
-      startAutoRefresh();
-    }
+async function init() {
+    await fetchMediaFiles();
+    startSlideshow();
+    startAutoRefresh();
+}
 
-    init();
-  </script>
+init();
+
+</script>
+
+
+
 
 </body>
+
+
+
+
+
+
 </html>
