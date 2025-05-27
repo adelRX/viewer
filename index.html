@@ -49,8 +49,43 @@ let slideshowInterval;
 let refreshInterval;
 
 async function fetchMediaFiles() {
+   console.log("🔍 بدء جلب الملفات...");
     const query = `'${FOLDER_ID}' in parents and (mimeType contains 'image/' or mimeType contains 'video/') and trashed = false`;
     const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=files(id,name,mimeType)&key=${API_KEY}`;
+
+    try {
+        const res = await fetch(url);
+        console.log("✅ استجابة API:", res);
+
+        if (!res.ok) {
+            throw new Error(`❌ خطأ في الجلب: ${res.status}`);
+        }
+
+        const data = await res.json();
+        console.log("🔎 البيانات المستلمة:", data);
+
+        if (!data.files || data.files.length === 0) {
+            console.error("❌ لم يتم العثور على أي ملفات في المجلد.");
+            document.getElementById('container').innerHTML = '❌ لا توجد وسائط متاحة.';
+            return;
+        }
+
+        mediaFiles = data.files.map(file => ({
+            id: file.id,
+            name: file.name,
+            mimeType: file.mimeType
+        }));
+
+        showMedia(mediaFiles[currentIndex]);
+
+    } catch (e) {
+        console.error("❌ حدث خطأ أثناء جلب الوسائط:", e);
+        document.getElementById('container').innerHTML = '❌ فشل في تحميل الملفات.';
+    }
+}
+
+    
+
 
     try {
         const res = await fetch(url);
