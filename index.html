@@ -108,11 +108,11 @@
       slideshowInterval = setInterval(() => {
         currentIndex = (currentIndex + 1) % mediaFiles.length;
         showMedia(mediaFiles[currentIndex]);
-      }, 20000); // 5 ثواني لكل وسيلة
+      }, 60000); // 5 ثواني لكل وسيلة
     }
 
     function startAutoRefresh() {
-      refreshInterval = setInterval(fetchMediaFiles, 60000); // كل 60 ثانية
+      refreshInterval = setInterval(fetchMediaFiles, 3000000); // كل 60 ثانية
     }
 
     async function init() {
@@ -126,3 +126,4 @@
 
 </body>
 </html>
+
